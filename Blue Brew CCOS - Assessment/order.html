@@ -1,0 +1,303 @@
+<link rel="stylesheet" type="text/css" href="style.css">
+<!--<link rel="import" href="bower_components/paper-input/paper-input.html"> -->
+<!-- <link rel="import" href="bower_components/paper-button/paper-button.html"> -->
+
+<img class="topHeader" src="bbLogo.png" height="100" width="100">
+<h1 class="topHeader">C.c.o.S</h1>
+<br>
+
+<!--<h1>Coffee Type</h1>-->
+<ol id="coffeeTypeList">
+ <li id="flatWhite">Flat White</li>
+ <li id="latte">Lattee</li>
+ <li id="mocha">Mocha</li>
+ <li id="longBlack">Long Black</li>
+ <li id="hotChoc">Hot Choc</li>
+ <li id="americano">Americano</li>
+ <li id="chiLattee">Chi Lattee</li>
+</oi>
+<br>
+
+<h1>Name:<h1>
+<input id="nameInput" type="text">
+<!--<paper-input id="nameInput" label="Name"></paper-input>-->
+<br>
+<br>
+<!--<paper-button id="confirmOrderButton" raised>Confirm Order</button>-->
+
+
+<!-- HTML ELEMENTS FOR 'DELIVERY' DELIVERY METHOD-->
+
+<h1 id="deliveryHeader">Deliver to:</h1>
+
+<select id="roomTypeInput">
+ <option value="RM">RM</option>
+ <option value="G">G</option>
+ <option value="SP">SP</option>
+ <option value="JP">JP</option>
+ <option value="SC">SC</option>
+ <option value="EM">EM</option>
+ <option value="MC">MC</option>
+ <option value="L">L</option>
+</select>
+
+<input id="roomNumberInput" type="number" min="0" max="40" value="39">
+
+<!-- Going to use Polymer for the phone number input (as well as the rest of the HTML elements eventually)-->
+<br>
+<br>
+<button id="nextButton">Next</button>
+<br>
+<br>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+<script>
+
+//multiple selections of one coffee
+
+//Global variables
+var nameInput = document.getElementById("nameInput");
+var roomNumberInput = document.getElementById("roomNumberInput");
+var roomTypeInput = document.getElementById("roomTypeInput");
+
+var deliveryMethod = localStorage.getItem("deliveryMethod");
+var coffeeLiArray = $("li").toArray();
+var globalQuantity = 0;
+
+
+for(var i = 0; i < coffeeLiArray.length; i++)
+{
+	coffeeLiArray[i].checked = false;
+
+	coffeeLiArray[i].onclick = function (){
+		selectCoffeeType(this);
+	};
+}
+
+
+
+//Global Functions
+function initOrderPage(){	
+	if(deliveryMethod == "delivery")
+	{
+		document.getElementById("deliveryHeader").style.visibility = "visible";
+		document.getElementById("roomTypeInput").style.visibility = "visible";
+		document.getElementById("roomNumberInput").style.visibility = "visible";
+
+	}else if(deliveryMethod == "pickUp")
+	{
+		document.getElementById("deliveryHeader").style.visibility = "hidden";
+		document.getElementById("roomTypeInput").style.visibility = "hidden";
+		document.getElementById("roomNumberInput").style.visibility = "hidden";
+	}
+}
+
+function validInputs(){
+	var allValidInputs;
+	var numOfCoffees = 0;
+
+	//WILL HAVE TO VALIDATE IF THE ROOM EXISTS. yay (╯°□°）╯︵ ┻━┻
+
+	for(var i = 0; i < coffeeLiArray.length; i++)
+	{
+		if(coffeeLiArray[i].checked)
+		{
+			numOfCoffees += Number(coffeeLiArray[i].quantityElement.value);
+		}
+	}
+	console.log(numOfCoffees);
+	globalQuantity = numOfCoffees;
+
+	if(nameInput.value && numOfCoffees <= 5)
+	{
+		for(var i = 0; i < coffeeLiArray.length; i++)
+		{
+			if(coffeeLiArray[i].checked)
+			{
+				allValidInputs = true;
+				break;
+			}else{
+				allValidInputs = false;
+			}
+			
+		}
+	}else{
+		allValidInputs = false;
+	}
+
+	return allValidInputs;
+}
+
+function selectCoffeeType(coffeeLiElement){
+	if(!coffeeLiElement.checked)
+	{
+		coffeeLiElement.quantityElement = document.createElement("input");
+		coffeeLiElement.quantityElement.setAttribute("type", "number");
+		coffeeLiElement.quantityElement.setAttribute("class", "quantityElement");
+		coffeeLiElement.quantityElement.setAttribute("min", "1");
+		coffeeLiElement.quantityElement.setAttribute("max", "9");
+		coffeeLiElement.quantityElement.setAttribute("value", "1");
+
+		coffeeLiElement.quantityElement.style.position = "absolute";
+		coffeeLiElement.quantityElement.style.left = "550px";
+		coffeeLiElement.quantityElement.style.top = $(coffeeLiElement).position().top + 14;
+		document.body.appendChild(coffeeLiElement.quantityElement);
+		
+
+		coffeeLiElement.checked = true;
+		coffeeLiElement.style.color = "#d9d9d9";
+		coffeeLiElement.style.backgroundColor = "#595959";
+	}
+	else
+	{
+		document.body.removeChild(coffeeLiElement.quantityElement);
+		coffeeLiElement.checked = false;
+		coffeeLiElement.style.color = "black";
+		coffeeLiElement.style.backgroundColor = "#f2f2f2";
+	}
+
+}
+
+function addConfirmOrderElements(currentOrder){
+	var totalCost = 0;
+
+	var confirmOrderDiv = document.createElement("div");
+	confirmOrderDiv.style.display = "inline-block";
+	confirmOrderDiv.style.padding = "10px";
+	confirmOrderDiv.style.borderRadius = "10px";
+	confirmOrderDiv.style.borderWidth = "15px";
+	confirmOrderDiv.style.borderStyle = "solid";
+	confirmOrderDiv.style.position = "absolute";
+	confirmOrderDiv.style.left = "750px";
+	confirmOrderDiv.style.top = "150px";
+
+	if(deliveryMethod == "delivery")
+		confirmOrderDiv.style.borderColor = "green";
+	else
+		confirmOrderDiv.style.borderColor = "red";
+
+	var customerHeader = document.createElement("H1");
+	customerHeader.style.marginTop = "0px";
+	customerHeader.appendChild(document.createTextNode(currentOrder.customer));
+	confirmOrderDiv.appendChild(customerHeader);
+
+	for(var i = 0; i < coffeeLiArray.length; i++)
+	{
+		if(coffeeLiArray[i].checked)
+		{
+			for(var a = 0; a < Number(coffeeLiArray[i].quantityElement.value); a++)
+			{
+				totalCost += 3;
+
+				var orderElement = document.createElement("div");
+				orderElement.style.display = "inline-block";
+				orderElement.style.padding = "10px";
+				orderElement.style.borderRadius = "10px";
+				orderElement.style.borderStyle = "solid";
+
+				orderElement.appendChild(document.createTextNode(coffeeLiArray[i].innerHTML));
+				orderElement.appendChild(document.createElement("br"));
+				orderElement.appendChild(document.createTextNode("$3"));
+
+				confirmOrderDiv.appendChild(orderElement);
+
+			}
+		}
+
+	}
+
+	var deliveryDetailsHeader = document.createElement("H1");
+	var totalHeader = document.createElement("H2");
+	if(deliveryMethod == "delivery")
+	{
+		totalCost++;
+		confirmOrderDiv.appendChild(document.createElement("br"));
+		confirmOrderDiv.appendChild(document.createTextNode("+ $1 Delivery Charge"));
+		deliveryDetailsHeader.appendChild(document.createTextNode("Deliver to " + currentOrder.roomType + currentOrder.roomNumber));
+		confirmOrderDiv.appendChild(deliveryDetailsHeader);
+		confirmOrderDiv.appendChild(document.createTextNode("021 224 432")); 
+		//placeholder ^^
+	}else{
+		deliveryDetailsHeader.appendChild(document.createTextNode("Pick Up at Cart"));
+		confirmOrderDiv.appendChild(deliveryDetailsHeader);
+
+	}
+
+	totalHeader.appendChild(document.createTextNode("Total: $" + totalCost.toString()));
+	confirmOrderDiv.appendChild(totalHeader);
+
+	var confirmOrderButton = document.createElement("BUTTON");
+	confirmOrderButton.appendChild(document.createTextNode("Confirm"));
+	var cancelOrderButton = document.createElement("BUTTON");
+	cancelOrderButton.appendChild(document.createTextNode("Cancel"));
+	confirmOrderDiv.appendChild(cancelOrderButton);    
+	confirmOrderDiv.appendChild(confirmOrderButton);
+
+	document.body.appendChild(confirmOrderDiv);
+
+}
+
+//prototypes
+function Order(){
+	var selectedCoffeeTypes = [];
+	for(var i = 0; i < coffeeLiArray.length; i++)
+		{
+			if(coffeeLiArray[i].checked)
+			{
+				selectedCoffeeTypes.push(coffeeLiArray[i].innerHTML);
+			}
+			
+		}
+	//are these variables redundant?
+	this.coffeeOrders = selectedCoffeeTypes;
+	this.overallQuantity = globalQuantity;
+	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	this.customer = nameInput.value;
+
+	if(deliveryMethod == "delivery")
+	{
+		this.roomNumber = roomNumberInput.value;
+		this.roomType = roomTypeInput.value;
+		//dont forget this
+		this.phoneNumber;
+	}
+
+}	
+
+
+
+
+document.getElementById("nextButton").onclick = function() {
+	if(validInputs())
+	{
+		alert("VALID INPUTS");
+
+		var currentOrder = new Order();
+
+		addConfirmOrderElements(currentOrder);
+		/*
+		//will need to clear the inputs here 
+		//maybe not for this version
+		globalQuantity = 0;
+		nameInput.value = "";
+		for(var i = 0; i < coffeeLiArray.length; i++)
+		{
+			if(coffeeLiArray[i].checked)
+			 document.body.removeChild(coffeeLiArray[i].quantityElement);
+
+			coffeeLiArray[i].checked = false;
+			coffeeLiArray[i].style.backgroundColor = "#f2f2f2";
+		}
+		*/
+
+	}else{
+		alert("NON VALID INPUTS");
+	}
+
+};
+
+initOrderPage();
+
+</script>

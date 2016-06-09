@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<center><img src="bbLogo.png" width="500px" height="500px"></center>
+
+<center><h1>New Order:</h1></center>
+
+<div class="deliverySelection" id="delivery">
+ <h2 class="methodHeader">Delivery</h2>
+</div>
+
+<div class="deliverySelection" id="pickUp"> 
+ <h2 class="methodHeader">Pick up</h2>
+</div>
+
+<script>
+var deliveryDiv = document.getElementById("delivery");
+var pickUpDiv = document.getElementById("pickUp");
+
+deliveryDiv.onclick = function(){clickedOption(this);};
+pickUpDiv.onclick = function(){clickedOption(this);};
+
+function clickedOption(option){
+	alert(option.id);
+	localStorage.setItem("deliveryMethod", option.id);
+	window.open("order.html", "_self");
+}
+
+
+</script>
