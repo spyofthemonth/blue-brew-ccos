@@ -1,14 +1,82 @@
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@import url(https://fonts.googleapis.com/css?family=Nunito:300);
+/*
 @font-face{
  font-family: jaldi;
  src: url(fonts/jaldiRegular.ttf) format('truetype');
 }
-
+*/
 html{
  background-color: #f2f2f2;
 }
 
+footer{
+ margin-top: 50px;
+ height: 50px;
+ border-top-width: 1px;
+ border-top-style: solid;
+ border-top-color: #999999;
+ background-color: #e6e6e6;
+}
+
+#footerText{
+ font-family: 'Nunito', sans-serif;
+ margin-left: 50px;
+ display: inline-block;
+}
+
+#gitHubButton{
+ border: none;
+ background-color: #e6e6e6;
+ float: right;
+ margin-right: 10px;
+}
+
+#gitHubButton:hover{
+ background-color: #bfbfbf;
+}
+
+#gitHubText{
+ font-family: 'Nunito', sans-serif;
+}
+
+#gitHubIcon{
+ margin-right: 5px;
+ vertical-align: middle;
+}
+
 .topHeader{
  display: inline-block;
+}
+
+.sizeSelector{
+ position: absolute;
+ border-radius: 15px;
+ width: 60px;
+ height: 25px;
+ padding-top: 6px;
+ background-color: #66b3ff;
+ color: white;
+ border: none;
+ border-radius: 10px;
+ text-align: center;
+ font-size: 15px;
+ font-family: 'Nunito', sans-serif;
+}
+
+#confirmOrderDiv{
+ display: inline-block;
+ padding: 10px;
+ border-radius: 10px;
+ border-width: 15px;
+ border-style: solid;
+ position: absolute;
+ left: 685px;
+ top: 150px;
+ background-color: #e3e3e3;
+ box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+
 }
 
 #nextButton{
@@ -22,13 +90,26 @@ html{
  font-size: 16px;
  width: 100%;
  border-radius: 10px;
- -webkit-transition-duration: 0.4s; 
-  transition-duration: 0.4s;
 
 }
 
 #nextButton:hover {
  color: red;
+ -webkit-transition-duration: 0.4s; 
+ transition-duration: 0.4s;
+ box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+#phoneNumberInput{
+ border: none;
+ background-color: #b3c2bf;
+ padding: 4px 4px;
+ color: white;
+}
+
+#phoneNumberInput:hover{
+ -webkit-transition-duration: 0.4s; 
+ transition-duration: 0.4s;
  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
@@ -66,7 +147,7 @@ html{
 }
 
 .quantityElement{
- width: 10%%;
+ /*width: 10%%;*/
  height: 3%;
  padding: 12px 20px;
  background-color: #b3c2bf;
@@ -91,8 +172,8 @@ li{
 }
 
 li:hover{
- color: #d9d9d9;
- background-color:#595959;
+ color: #d9d9d9 !important;
+ background-color:#595959 !important;
 }
 
 ul{
@@ -107,33 +188,84 @@ ul{
  display: inline;
 }
 
-
 h1{
- font-family: monospace;
+ font-family: 'Open Sans', sans-serif;
+ color: #727272;
 
+}
+
+#numberLabel{
+ font-family: 'Nunito', sans-serif;
+ margin-left: 15px;
+ display: inline-block;
+ color: #727272;
+}
+
+.orderElementButton{
+ background-color: #e9ece5;
+ border: none;
+ color: #3b3a36;
+ padding: 15px 32px;
+ text-align: center;
+ text-decoration: none;
+ display: inline-block;
+ font-size: 16px;
+ border-style: solid;
+ border-width: 1px;
+ border-color: #727272;
+ /*width: 100%;
+ border-radius: 10px;
+ */
+}
+
+.orderElementButton:hover{
+ -webkit-transition-duration: 0.4s; 
+ transition-duration: 0.4s;
+ box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+#confirmOrderButton{
+ margin-left: 10px;
+}
+
+#confirmOrderButton:hover{
+ border-color: blue;
+}
+
+#cancelOrderButton:hover{
+ border-color: red;
 }
 
 .deliverySelection{
   display: inline-block;
   padding: 10px;
-  height: 375px;
-  width: 400px;
+  height: 200px;
+  width: 350px;
   border-radius: 15px;
   border-style: solid;
   border-width: 10px;
-  margin-left: 170px;
+  margin-left: 160px;
 }
 
 #delivery{
- border-color: green;
+ border-color: #009688;
+}
+
+#delivery:hover{
+ background-color: #e3e3e3;
+ color: #40bf80;
 }
 
 #pickUp{
- border-color: red;
+ border-color: #ff4d4d;
+}
 
+#pickUp:hover{
+ background-color: #e3e3e3;
+ color: #ff8080;
 }
 
 .methodHeader{
- font-family: monospace;
- margin-left: 20px;
+ font-family: 'Nunito', sans-serif;
+ margin-left: 120px;
 }

@@ -3,7 +3,7 @@
 <!-- <link rel="import" href="bower_components/paper-button/paper-button.html"> -->
 
 <img class="topHeader" src="bbLogo.png" height="100" width="100">
-<h1 class="topHeader">C.c.o.S</h1>
+<h1 class="topHeader">Blue Brew C.C.O.S</h1>
 <br>
 
 <!--<h1>Coffee Type</h1>-->
@@ -19,7 +19,7 @@
 <br>
 
 <h1>Name:<h1>
-<input id="nameInput" type="text">
+<input id="nameInput" type="text" maxLength="13">
 <!--<paper-input id="nameInput" label="Name"></paper-input>-->
 <br>
 <br>
@@ -39,11 +39,16 @@
  <option value="EM">EM</option>
  <option value="MC">MC</option>
  <option value="L">L</option>
+ <option value="W">W</option>
+ <option value="DS">DS</option>
+ <option value="F">F</option>
 </select>
 
 <input id="roomNumberInput" type="number" min="0" max="40" value="39">
+<p id="numberLabel">Mobile Num:</p>
+<input id="phoneNumberInput" type="text" onkeypress="return isProperNumberInput(event)" maxLength="12">
 
-<!-- Going to use Polymer for the phone number input (as well as the rest of the HTML elements eventually)-->
+
 <br>
 <br>
 <button id="nextButton">Next</button>
@@ -55,16 +60,18 @@
 
 <script>
 
-//multiple selections of one coffee
-
 //Global variables
 var nameInput = document.getElementById("nameInput");
+var phoneNumberInput = document.getElementById("phoneNumberInput");
 var roomNumberInput = document.getElementById("roomNumberInput");
 var roomTypeInput = document.getElementById("roomTypeInput");
+var nextButton = document.getElementById("nextButton");
 
 var deliveryMethod = localStorage.getItem("deliveryMethod");
 var coffeeLiArray = $("li").toArray();
 var globalQuantity = 0;
+var currentOrdersArray = [];
+localStorage.setItem("currentOrdersArray", JSON.stringify(currentOrdersArray));
 
 
 for(var i = 0; i < coffeeLiArray.length; i++)
@@ -94,11 +101,85 @@ function initOrderPage(){
 	}
 }
 
+function isProperNumberInput(evt){
+	if(evt.charCode >= 48 && evt.charCode <= 57)
+		return true;
+	else
+		return false;
+}
+
 function validInputs(){
 	var allValidInputs;
 	var numOfCoffees = 0;
+	var validPhoneNum;
+	var validRoom = true;
+	var invalidProblems = [];
 
 	//WILL HAVE TO VALIDATE IF THE ROOM EXISTS. yay (╯°□°）╯︵ ┻━┻
+	//UPDATE: who numbered these damn rooms
+	//These rooms have gaps, check "map.pdf" to see reasoning
+
+	//ALSO ROOM 39 DOES EXIST, new room so not on "map.pdf" (I would know, it's my tutor room)
+
+	switch(roomTypeInput.value){
+		case "RM":
+			if(Number(roomNumberInput.value) < 6 || Number(roomNumberInput.value) > 39)
+				validRoom = false;
+			break;
+		case "G":
+			if(Number(roomNumberInput.value) < 1 || Number(roomNumberInput.value) > 14)
+				validRoom = false;
+			break;
+		case "SP":
+			switch(Number(roomNumberInput.value)){
+				case 1:
+				case 2:
+				case 20:
+				case 21:
+					validRoom = true;
+					break;
+				default: 
+					validRoom = false;
+					break;
+			}
+			break;
+		case "JP":
+			if(Number(roomNumberInput.value) < 10 || Number(roomNumberInput.value) > 26)
+				validRoom = false;
+			else if(Number(roomNumberInput.value) < 20 || Number(roomNumberInput.value) > 16)
+				validRoom = false;
+			break;
+		case "SC":
+			if(Number(roomNumberInput.value) < 10 || Number(roomNumberInput.value) > 26)
+				validRoom = false;
+			else if(Number(roomNumberInput.value) < 20 && Number(roomNumberInput.value) > 14)
+				validRoom = false;
+			break;
+		case "EM":
+			if(Number(roomNumberInput.value) < 10 || Number(roomNumberInput.value) > 14)
+				validRoom = false;
+			else if((Number(roomNumberInput.value) < 20 && Number(roomNumberInput.value) > 18))
+				validRoom = false;
+			break;
+		case "MC":
+		case "L":
+			if(Number(roomNumberInput.value) < 1 || Number(roomNumberInput.value) > 7)
+				validRoom = false;
+			break;
+		case "W":
+			if(Number(roomNumberInput.value) < 1 || Number(roomNumberInput.value) > 6)
+				validRoom = false;
+			break;
+		case "DS":
+		case "F":
+			if(Number(roomNumberInput.value) < 1 || Number(roomNumberInput.value) > 2)
+				validRoom = false;
+			break;
+		 default:
+			validRoom = false;
+			break;
+
+	}
 
 	for(var i = 0; i < coffeeLiArray.length; i++)
 	{
@@ -110,21 +191,49 @@ function validInputs(){
 	console.log(numOfCoffees);
 	globalQuantity = numOfCoffees;
 
-	if(nameInput.value && numOfCoffees <= 5)
+	if(deliveryMethod == "delivery")
+		if(phoneNumberInput.value && phoneNumberInput.value.length >= 9)
+			validPhoneNum = true;
+		else
+			validPhoneNum = false;
+	else
+		validPhoneNum = true;
+	
+
+	if(nameInput.value && numOfCoffees <= 5 && numOfCoffees > 1 && validPhoneNum && validRoom)
 	{
-		for(var i = 0; i < coffeeLiArray.length; i++)
-		{
-			if(coffeeLiArray[i].checked)
-			{
-				allValidInputs = true;
-				break;
-			}else{
-				allValidInputs = false;
-			}
-			
-		}
+		allValidInputs = true;
+
 	}else{
 		allValidInputs = false;
+
+		//no else, because multiple invalid inputs is possible;
+
+		if(!nameInput.value)
+			invalidProblems.splice(0,0, "*Enter Name");
+		if(numOfCoffees < 1 || numOfCoffees >= 5)
+			invalidProblems.splice(0,0, "*Can only select 5 beverages");
+		if(!validPhoneNum)
+			invalidProblems.splice(0,0, "*Valid phone number must have at least 9 digits");
+		if(!validRoom)
+			invalidProblems.splice(0,0, "*This room doesn't exist");
+
+		//var problemText = "";
+		var problemParagraph = document.createElement("p");
+		for(var i = 0; i < invalidProblems.length; i++)
+		{
+			//problemText = problemText.concat(invalidProblems[i], "\n");
+			problemParagraph.appendChild(document.createTextNode(invalidProblems[i]));
+			problemParagraph.appendChild(document.createElement("br"));
+		}
+		
+		problemParagraph.style.fontFamily = "Nunito", "sans-serif";
+		problemParagraph.style.position = "absolute";
+		problemParagraph.style.color = "red";
+		problemParagraph.style.left = "685px";
+		problemParagraph.style.top = "335px";
+		document.body.appendChild(problemParagraph);
+
 	}
 
 	return allValidInputs;
@@ -144,8 +253,22 @@ function selectCoffeeType(coffeeLiElement){
 		coffeeLiElement.quantityElement.style.left = "550px";
 		coffeeLiElement.quantityElement.style.top = $(coffeeLiElement).position().top + 14;
 		document.body.appendChild(coffeeLiElement.quantityElement);
-		
 
+		coffeeLiElement.sizeSelector = document.createElement("div");
+		coffeeLiElement.sizeSelector.setAttribute("class","sizeSelector");
+		coffeeLiElement.sizeSelector.style.position = "absolute";
+		coffeeLiElement.sizeSelector.style.left = "100px";
+		coffeeLiElement.sizeSelector.style.top = $(coffeeLiElement).position().top + 10;
+		coffeeLiElement.sizeSelector.checked = false;
+
+		var sizeSpan = document.createElement("span");
+		sizeSpan.setAttribute("id", "sizeSpan");
+		sizeSpan.appendChild(document.createTextNode("Small"));
+
+		coffeeLiElement.sizeSelector.appendChild(sizeSpan);
+		coffeeLiElement.sizeSelector.onclick = function(){selectSize(this);};
+		document.body.appendChild(coffeeLiElement.sizeSelector);
+		
 		coffeeLiElement.checked = true;
 		coffeeLiElement.style.color = "#d9d9d9";
 		coffeeLiElement.style.backgroundColor = "#595959";
@@ -153,6 +276,7 @@ function selectCoffeeType(coffeeLiElement){
 	else
 	{
 		document.body.removeChild(coffeeLiElement.quantityElement);
+		document.body.removeChild(coffeeLiElement.sizeSelector);
 		coffeeLiElement.checked = false;
 		coffeeLiElement.style.color = "black";
 		coffeeLiElement.style.backgroundColor = "#f2f2f2";
@@ -160,23 +284,30 @@ function selectCoffeeType(coffeeLiElement){
 
 }
 
+function selectSize(sizeSelector){
+	if(!sizeSelector.checked)
+	{
+		sizeSelector.checked = true;
+		sizeSelector.style.backgroundColor = "#ff9966";
+		$(sizeSelector).find("span").html("Large");
+
+	}else{
+		sizeSelector.checked = false;
+		sizeSelector.style.backgroundColor = "#66b3ff";
+		$(sizeSelector).find("span").html("Small");
+	}
+}
+
 function addConfirmOrderElements(currentOrder){
 	var totalCost = 0;
 
 	var confirmOrderDiv = document.createElement("div");
-	confirmOrderDiv.style.display = "inline-block";
-	confirmOrderDiv.style.padding = "10px";
-	confirmOrderDiv.style.borderRadius = "10px";
-	confirmOrderDiv.style.borderWidth = "15px";
-	confirmOrderDiv.style.borderStyle = "solid";
-	confirmOrderDiv.style.position = "absolute";
-	confirmOrderDiv.style.left = "750px";
-	confirmOrderDiv.style.top = "150px";
+	confirmOrderDiv.setAttribute("id", "confirmOrderDiv");
 
 	if(deliveryMethod == "delivery")
-		confirmOrderDiv.style.borderColor = "green";
+		confirmOrderDiv.style.borderColor = "#009688";
 	else
-		confirmOrderDiv.style.borderColor = "red";
+		confirmOrderDiv.style.borderColor = "#ff4d4d";
 
 	var customerHeader = document.createElement("H1");
 	customerHeader.style.marginTop = "0px";
@@ -189,17 +320,32 @@ function addConfirmOrderElements(currentOrder){
 		{
 			for(var a = 0; a < Number(coffeeLiArray[i].quantityElement.value); a++)
 			{
-				totalCost += 3;
-
 				var orderElement = document.createElement("div");
 				orderElement.style.display = "inline-block";
 				orderElement.style.padding = "10px";
 				orderElement.style.borderRadius = "10px";
 				orderElement.style.borderStyle = "solid";
+				orderElement.style.borderWidth = "2.5px";
+				orderElement.style.fontFamily = "Nunito", "sans-serif";
 
 				orderElement.appendChild(document.createTextNode(coffeeLiArray[i].innerHTML));
 				orderElement.appendChild(document.createElement("br"));
-				orderElement.appendChild(document.createTextNode("$3"));
+				var priceTextNode; 
+
+				if(coffeeLiArray[i].sizeSelector.checked)
+				{
+					orderElement.style.borderColor = "#ff9966";
+					priceTextNode = document.createTextNode("$3.80");
+					totalCost += 3.8;
+				}
+				else
+				{
+					orderElement.style.borderColor = "#66b3ff";
+					priceTextNode = document.createTextNode("$3");
+					totalCost += 3;
+				}
+				
+				orderElement.appendChild(priceTextNode);
 
 				confirmOrderDiv.appendChild(orderElement);
 
@@ -214,32 +360,80 @@ function addConfirmOrderElements(currentOrder){
 	{
 		totalCost++;
 		confirmOrderDiv.appendChild(document.createElement("br"));
-		confirmOrderDiv.appendChild(document.createTextNode("+ $1 Delivery Charge"));
+		var delivChargeSpan = document.createElement("span");
+		delivChargeSpan.style.fontFamily = "Nunito", "sans-serif";
+		delivChargeSpan.appendChild(document.createTextNode("+ $1 Delivery Charge"));
+		confirmOrderDiv.appendChild(delivChargeSpan);
 		deliveryDetailsHeader.appendChild(document.createTextNode("Deliver to " + currentOrder.roomType + currentOrder.roomNumber));
 		confirmOrderDiv.appendChild(deliveryDetailsHeader);
-		confirmOrderDiv.appendChild(document.createTextNode("021 224 432")); 
-		//placeholder ^^
+		var phNumSpan = document.createElement("span");
+		phNumSpan.style.fontFamily = "Nunito", "sans-serif";
+		phNumSpan.appendChild(document.createTextNode("Mobile Num: " + currentOrder.phoneNumber));
+		confirmOrderDiv.appendChild(phNumSpan);
 	}else{
 		deliveryDetailsHeader.appendChild(document.createTextNode("Pick Up at Cart"));
 		confirmOrderDiv.appendChild(deliveryDetailsHeader);
 
 	}
 
-	totalHeader.appendChild(document.createTextNode("Total: $" + totalCost.toString()));
+	totalHeader.appendChild(document.createTextNode("Total: $" + totalCost.toFixed(2).toString()));
+	totalHeader.style.fontFamily = "Nunito", "sans-serif";
 	confirmOrderDiv.appendChild(totalHeader);
 
 	var confirmOrderButton = document.createElement("BUTTON");
+	confirmOrderButton.setAttribute("class", "orderElementButton");
+	confirmOrderButton.setAttribute("id", "confirmOrderButton");
 	confirmOrderButton.appendChild(document.createTextNode("Confirm"));
 	var cancelOrderButton = document.createElement("BUTTON");
+	cancelOrderButton.setAttribute("class", "orderElementButton");
+	cancelOrderButton.setAttribute("id", "cancelOrderButton");
 	cancelOrderButton.appendChild(document.createTextNode("Cancel"));
 	confirmOrderDiv.appendChild(cancelOrderButton);    
 	confirmOrderDiv.appendChild(confirmOrderButton);
 
 	document.body.appendChild(confirmOrderDiv);
 
+	confirmOrderButton.onclick = function(){orderDivConfirmation(true, confirmOrderDiv);};
+	cancelOrderButton.onclick = function(){orderDivConfirmation(false, confirmOrderDiv);};
+
+}
+
+function orderDivConfirmation(confirmed, confirmOrderDiv){
+	if(confirmed)
+	{
+		document.body.removeChild(confirmOrderDiv);
+		/*
+		var updatedCurrentOrdersArray = JSON.parse(localStorage.getItem("currentOrdersArray"));
+		updatedCurrentOrdersArray.splice(0,0,currentOrder);
+		localStorage.setItem("currentOrdersArray", JSON.stringify(updatedCurrentOrdersArray));
+		console.log(JSON.parse(localStorage.getItem("currentOrdersArray"))[0].customer); 
+		localStorage.setItem("amendment", JSON.stringify(true));
+		*/
+
+		globalQuantity = 0;
+		nameInput.value = "";
+		phoneNumberInput.value = "";
+		for(var i = 0; i < coffeeLiArray.length; i++)
+		{
+			if(coffeeLiArray[i].checked)
+			 document.body.removeChild(coffeeLiArray[i].quantityElement);
+
+			coffeeLiArray[i].checked = false;
+			coffeeLiArray[i].style.color = "black";
+			coffeeLiArray[i].style.backgroundColor = "#f2f2f2";
+		}
+
+	}else{
+		document.body.removeChild(confirmOrderDiv);
+	}
+	nextButton.disabled = false;
+	nextButton.style.backgroundColor = "#e9ece5";
+	nextButton.style.opacity = "1";
 }
 
 //prototypes
+
+//got to restructure this f****ng prototype 
 function Order(){
 	var selectedCoffeeTypes = [];
 	for(var i = 0; i < coffeeLiArray.length; i++)
@@ -260,8 +454,7 @@ function Order(){
 	{
 		this.roomNumber = roomNumberInput.value;
 		this.roomType = roomTypeInput.value;
-		//dont forget this
-		this.phoneNumber;
+		this.phoneNumber = phoneNumberInput.value;
 	}
 
 }	
@@ -269,28 +462,18 @@ function Order(){
 
 
 
-document.getElementById("nextButton").onclick = function() {
+nextButton.onclick = function() {
 	if(validInputs())
 	{
 		alert("VALID INPUTS");
 
 		var currentOrder = new Order();
 
-		addConfirmOrderElements(currentOrder);
-		/*
-		//will need to clear the inputs here 
-		//maybe not for this version
-		globalQuantity = 0;
-		nameInput.value = "";
-		for(var i = 0; i < coffeeLiArray.length; i++)
-		{
-			if(coffeeLiArray[i].checked)
-			 document.body.removeChild(coffeeLiArray[i].quantityElement);
+		this.disabled = true;
+		this.style.backgroundColor = "gray";
+		this.style.opacity = "0.1";
 
-			coffeeLiArray[i].checked = false;
-			coffeeLiArray[i].style.backgroundColor = "#f2f2f2";
-		}
-		*/
+		addConfirmOrderElements(currentOrder);
 
 	}else{
 		alert("NON VALID INPUTS");
