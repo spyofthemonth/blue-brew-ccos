@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 
 <link rel="stylesheet" type="text/css" href="style.css">
+<link rel="manifest" href="/manifest.json">
 
 <center><img src="bbLogo.png" width="400" height="400px"></center>
 
@@ -22,7 +23,7 @@ deliveryDiv.onclick = function(){clickedOption(this);};
 pickUpDiv.onclick = function(){clickedOption(this);};
 
 function clickedOption(option){
-	alert(option.id);
+	//alert(option.id);
 	localStorage.setItem("deliveryMethod", option.id);
 	window.open("order.html", "_self");
 }

@@ -129,7 +129,7 @@ footer{
 }
 
 #roomNumberInput{
- width: 10%%;
+ width: 10%;
  height: 3%;
  padding: 12px 20px;
  background-color: #b3c2bf;
@@ -147,7 +147,7 @@ footer{
 }
 
 .quantityElement{
- /*width: 10%%;*/
+ width: 6%;
  height: 3%;
  padding: 12px 20px;
  background-color: #b3c2bf;
@@ -244,7 +244,7 @@ h1{
   border-radius: 15px;
   border-style: solid;
   border-width: 10px;
-  margin-left: 160px;
+  margin-left: 180px;
 }
 
 #delivery{
