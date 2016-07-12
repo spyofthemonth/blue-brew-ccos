@@ -3,21 +3,39 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="manifest" href="/manifest.json">
 
-<center><img src="bbLogo.png" width="400" height="400px"></center>
+<center><img src="icons/bbLogo.png" width="400" height="400px"></center>
 
 <center><h1>New Order:</h1></center>
 
 <div class="deliverySelection" id="delivery">
  <h2 class="methodHeader">Delivery</h2>
+ <img class="methodHeader" src="icons/courier.png" width="90" height="90">
 </div>
 
 <div class="deliverySelection" id="pickUp"> 
  <h2 class="methodHeader">Pick up</h2>
+ <img class="methodHeader" src="icons/cart.png" width="90" height="90">
 </div>
+
+<h1 id="sentConfirmation">Order Successful!</h1>
 
 <script>
 var deliveryDiv = document.getElementById("delivery");
 var pickUpDiv = document.getElementById("pickUp");
+var confirmationHeader = document.getElementById("sentConfirmation");
+
+if(localStorage.getItem("sent") == "wroteOrder")
+{
+	if(localStorage.getItem("deliveryMethod") == "delivery")
+		confirmationHeader.style.color = "#40bf80";
+	else
+		confirmationHeader.style.color = "#ff4d4d";
+
+	confirmationHeader.style.visibility = "visible";
+	localStorage.setItem("sent", "noOrder");
+}
+
+//Checks whether the page was loaded after an order was submitted as well as resets the localStorage item
 
 deliveryDiv.onclick = function(){clickedOption(this);};
 pickUpDiv.onclick = function(){clickedOption(this);};
@@ -28,12 +46,13 @@ function clickedOption(option){
 	window.open("order.html", "_self");
 }
 
+//sets a localStorage item as the deliveryMethod chosen and loads order.html
 
 </script>
 
 
 <footer>
  <p id="footerText">&copy;2016 - Ryan King</p>
- <button id="gitHubButton" onclick="window.open('https://github.com/ryansapplepie/blue-brew-ccos');"><img id="gitHubIcon"src="githubIcon.png" width="45" height="45"><span id="gitHubText"> - View Source</span></button>
+ <button id="gitHubButton" onclick="window.open('https://github.com/ryansapplepie/blue-brew-ccos');"><img id="gitHubIcon"src="icons/githubIcon.png" width="45" height="45"><span id="gitHubText"> - View Source</span></button>
 
 </footer>

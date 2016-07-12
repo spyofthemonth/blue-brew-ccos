@@ -269,3 +269,49 @@ h1{
  font-family: 'Nunito', sans-serif;
  margin-left: 120px;
 }
+
+#sentConfirmation{
+ position: absolute;
+ left: 100px;
+ top: 50px;
+ visibility: hidden;
+}
+
+.tooltip{
+ float: right;
+ margin-top: 25px;
+ margin-right: 25px;
+ position: relative;
+ display: inline-block;
+}
+
+.tooltip .tooltiptext {
+ visibility: hidden;
+ width: 120px;
+ background-color: #c0dfd9;
+ color: #fff;
+ text-align: center;
+ border-radius: 6px;
+ padding: 5px 0;
+ margin-right: 10px;
+ position: absolute;
+ z-index: 1;
+ top: 5px;
+ right: 105%; 
+ font-family: 'Nunito', sans-serif;
+}
+
+.tooltip .tooltiptext::after {
+ content: "";
+ position: absolute;
+ top: 10%;
+ left: 100%;
+ margin-top: -5px;
+ border-width: 5px;
+ border-style: solid;
+ border-color: transparent transparent transparent #c0dfd9;
+}
+
+.tooltip:hover .tooltiptext {
+ visibility: visible;
+}

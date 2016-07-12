@@ -1,8 +1,0 @@
-{
-  "name": "Blue-Brew-CCOS",
-  "dependencies": {
-    "paper-input": "PolymerElements/paper-input#^1.1.11",
-    "paper-button": "PolymerElements/paper-button#^1.0.12",
-    "jquery": "^2.2.4"
-  }
-}
