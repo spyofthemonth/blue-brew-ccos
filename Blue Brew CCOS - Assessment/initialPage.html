@@ -36,6 +36,7 @@ if(localStorage.getItem("sent") == "wroteOrder")
 }
 
 //Checks whether the page was loaded after an order was submitted as well as resets the localStorage item
+//If the page was loaded after order was submitted than the confirmationHeader will show
 
 deliveryDiv.onclick = function(){clickedOption(this);};
 pickUpDiv.onclick = function(){clickedOption(this);};

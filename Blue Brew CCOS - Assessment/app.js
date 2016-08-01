@@ -67,8 +67,8 @@ function validInputs(){
 	var validRoom = true;
 	var invalidProblems = [];
 
-	//These rooms have gaps, check "map.pdf" to see reasoning
-	//ALSO ROOM 39 DOES EXIST, new room so not on "map.pdf" (I would know, it's my tutor room)
+	//These rooms have gaps, eg SC10-14 then no SC15-19 but there is SC20-26 after
+	//ALSO ROOM 39 DOES EXIST 
 
 	switch(roomTypeInput.value){
 		case "RM":
@@ -191,6 +191,8 @@ function validInputs(){
 	//returns boolean value
 }
 
+//This function below is called when a coffee is selected:
+
 function selectCoffeeType(coffeeLiElement){
 	if(!coffeeLiElement.checked)
 	{
@@ -227,6 +229,9 @@ function selectCoffeeType(coffeeLiElement){
 		coffeeLiElement.checked = true;
 		coffeeLiElement.style.color = "#d9d9d9";
 		coffeeLiElement.style.backgroundColor = "#595959";
+
+		//Essentially when the coffeeLiElement is clicked and it's not selected the corresponding quantityElement and 
+		//sizeSelector will appear. set .checked to true and the colors accordingly
 	}
 	else
 	{
@@ -235,11 +240,14 @@ function selectCoffeeType(coffeeLiElement){
 		coffeeLiElement.checked = false;
 		coffeeLiElement.style.color = "black";
 		coffeeLiElement.style.backgroundColor = "#f2f2f2";
+
+		//If coffeeLiElement is clicked and is already selected the corresponding quantityElement and sizeSelector will
+		//disappear as well as changing the color accordingly 
 	}
 
 }
 
-//This function is called when a coffee is selected
+//This function below is called when the sizeSelector is clicked
 
 function selectSize(sizeSelector){
 	if(!sizeSelector.checked)
@@ -254,8 +262,8 @@ function selectSize(sizeSelector){
 		$(sizeSelector).find("span").html("Small");
 	}
 }
+//If sizeSelector is checked (small) it will change to "Large" and vice versa. Colors and labels change appropriately
 
-//This function is called when the sizeSelector is clicked
 
 function addConfirmOrderElements(){
 	var totalCost = 0;
@@ -313,7 +321,7 @@ function addConfirmOrderElements(){
 
 	}
 
-	//Essentially checks which elements in coffeeLiArray are selected and outputs the orderElements according to the corresponding quantityElement.value
+	//What's happening above: essentially checks which elements in coffeeLiArray are selected and outputs the orderElements according to the corresponding quantityElement.value
 
 	var deliveryDetailsHeader = document.createElement("H1");
 	var totalHeader = document.createElement("H2");
@@ -336,6 +344,8 @@ function addConfirmOrderElements(){
 		confirmOrderDiv.appendChild(deliveryDetailsHeader);
 
 	}
+
+	//If delivery was chosen then show the delivery cost and details
 
 	totalHeader.appendChild(document.createTextNode("Total: $" + totalCost.toFixed(2).toString()));
 	totalHeader.style.fontFamily = "Nunito", "sans-serif";
@@ -362,27 +372,6 @@ function addConfirmOrderElements(){
 function orderDivConfirmation(confirmed){
 	if(confirmed)
 	{
-		//document.body.removeChild(confirmOrderDiv);
-		/*
-		var updatedCurrentOrdersArray = JSON.parse(localStorage.getItem("currentOrdersArray"));
-		updatedCurrentOrdersArray.splice(0,0,currentOrder);
-		localStorage.setItem("currentOrdersArray", JSON.stringify(updatedCurrentOrdersArray));
-		console.log(JSON.parse(localStorage.getItem("currentOrdersArray"))[0].customer); 
-		localStorage.setItem("amendment", JSON.stringify(true));
-		
-		nameInput.value = "";
-		phoneNumberInput.value = "";
-		for(var i = 0; i < coffeeLiArray.length; i++)
-		{
-			if(coffeeLiArray[i].checked)
-			 document.body.removeChild(coffeeLiArray[i].quantityElement);
-
-			coffeeLiArray[i].checked = false;
-			coffeeLiArray[i].style.color = "black";
-			coffeeLiArray[i].style.backgroundColor = "#f2f2f2";
-		}
-	*/
-
 		localStorage.setItem("sent", "wroteOrder");
 		window.open("initialPage.html", "_self");
 		//sets the localStorage item "sent" to "wroteOrder" so a confirmation message is shown on initialPage.html
@@ -392,6 +381,8 @@ function orderDivConfirmation(confirmed){
 		nextButton.disabled = false;
 		nextButton.style.backgroundColor = "#e9ece5";
 		nextButton.style.opacity = "1";
+		//If cancel is hit remove confirmOrderDiv and enable nextButton
+		//Inputs aren't cleared so amendments can be made
 	}
 	
 }
@@ -441,7 +432,6 @@ nextButton.onclick = function() {
 	//If another one is required it will be taken care of in validInputs()
 	if(validInputs())
 	{
-		//alert("VALID INPUTS");
 
 		//var currentOrder = new Order();
 
@@ -450,9 +440,6 @@ nextButton.onclick = function() {
 		this.style.opacity = "0.1";
 
 		addConfirmOrderElements();
-
-	}else{
-		//alert("NON VALID INPUTS");
 
 	}
 	//Call validInputs() to check for validInput
